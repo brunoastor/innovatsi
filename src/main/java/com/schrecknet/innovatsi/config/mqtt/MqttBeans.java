@@ -23,7 +23,6 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 
-import com.fasterxml.jackson.databind.ser.std.NumberSerializers.IntegerSerializer;
 import com.schrecknet.innovatsi.domain.Sector;
 import com.schrecknet.innovatsi.repository.SectorRepository;
 
@@ -32,7 +31,6 @@ public class MqttBeans {
 	
 	@Autowired
 	private SectorRepository sectorRepo;
-	
 	
 	@Bean
 	public MqttPahoClientFactory mqttClientFactory() {
@@ -66,7 +64,6 @@ public class MqttBeans {
 		return adapter;
 	}
 	
-	
 	@Bean
 	@ServiceActivator(inputChannel = "mqttInputChannel")
 	public MessageHandler handler() {
@@ -92,15 +89,14 @@ public class MqttBeans {
 		};
 	}
 	
-	
 	@Bean
     public MessageChannel mqttOutboundChannel() {
         return new DirectChannel();
     }
+
 	@Bean
     @ServiceActivator(inputChannel = "mqttOutboundChannel")
     public MessageHandler mqttOutbound() {
-        //clientId is generated using a random number
         MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler("serverOut", mqttClientFactory());
         messageHandler.setAsync(true);
         messageHandler.setDefaultTopic("#");
