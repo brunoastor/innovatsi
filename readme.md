@@ -1,0 +1,1 @@
+mosquitto_pub -h localhost -p 1883 -u admin -P 12345678 -t "mytopic" -m "mensagem nova"
