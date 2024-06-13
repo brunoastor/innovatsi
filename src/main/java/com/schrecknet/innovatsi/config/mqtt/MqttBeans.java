@@ -3,6 +3,7 @@ package com.schrecknet.innovatsi.config.mqtt;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.TimeZone;
 
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -28,10 +29,10 @@ import com.schrecknet.innovatsi.repository.SectorRepository;
 
 @Configuration
 public class MqttBeans {
-	
+
 	@Autowired
 	private SectorRepository sectorRepo;
-	
+
 	@Bean
 	public MqttPahoClientFactory mqttClientFactory() {
 		DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
@@ -47,11 +48,12 @@ public class MqttBeans {
 
 		return factory;
 	}
+
 	@Bean
 	public MessageChannel mqttInputChannel() {
 		return new DirectChannel();
 	}
-	
+
 	@Bean
 	public MessageProducer inbound() {
 		MqttPahoMessageDrivenChannelAdapter adapter = new MqttPahoMessageDrivenChannelAdapter("serverIn",
@@ -63,7 +65,7 @@ public class MqttBeans {
 		adapter.setOutputChannel(mqttInputChannel());
 		return adapter;
 	}
-	
+
 	@Bean
 	@ServiceActivator(inputChannel = "mqttInputChannel")
 	public MessageHandler handler() {
@@ -71,37 +73,36 @@ public class MqttBeans {
 
 			@Override
 			public void handleMessage(Message<?> message) throws MessagingException {
+
 				String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
-				if(topic.equals("mytopic")) {
+
+				if (topic.equals("mytopic")) {
 					System.out.println("This is the topic");
 				}
-				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-				sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+
 				System.out.println(message.getPayload());
-				try {					
-					Sector setor = new Sector(null, "A", sdf.parse("22/03/2018"), Arrays.asList(message.getPayload().toString()) , Arrays.asList(message.getPayload().toString()));
-					sectorRepo.save(setor);
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
+				String mensagem = message.getPayload().toString();
+
+				Sector setor = new Sector(new Date(), mensagem);
+				sectorRepo.save(setor);
 			}
 
 		};
 	}
-	
-	@Bean
-    public MessageChannel mqttOutboundChannel() {
-        return new DirectChannel();
-    }
 
 	@Bean
-    @ServiceActivator(inputChannel = "mqttOutboundChannel")
-    public MessageHandler mqttOutbound() {
-        MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler("serverOut", mqttClientFactory());
-        messageHandler.setAsync(true);
-        messageHandler.setDefaultTopic("#");
-        messageHandler.setDefaultRetained(false);
-        return messageHandler;
-    }
+	public MessageChannel mqttOutboundChannel() {
+		return new DirectChannel();
+	}
+
+	@Bean
+	@ServiceActivator(inputChannel = "mqttOutboundChannel")
+	public MessageHandler mqttOutbound() {
+		MqttPahoMessageHandler messageHandler = new MqttPahoMessageHandler("serverOut", mqttClientFactory());
+		messageHandler.setAsync(true);
+		messageHandler.setDefaultTopic("#");
+		messageHandler.setDefaultRetained(false);
+		return messageHandler;
+	}
 
 }

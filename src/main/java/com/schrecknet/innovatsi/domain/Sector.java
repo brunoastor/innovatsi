@@ -7,7 +7,12 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Document
+@Getter
+@Setter
 public class Sector implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -17,59 +22,10 @@ public class Sector implements Serializable {
 	private Date date;
 	private List<String> heat;
 	private List<String> humidity;
-	
-	public Sector() {
-		
-	}	
+	private String message;
 
-	public Sector(String id, String sector, Date date, List<String> heat, List<String> humidity) {
-		super();
-		this.id = id;
-		this.sector = sector;
+	public Sector(Date date, String message){
 		this.date = date;
-		this.heat = heat;
-		this.humidity = humidity;
+		this.message = message;
 	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getSector() {
-		return sector;
-	}
-
-	public void setSector(String sector) {
-		this.sector = sector;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public List<String> getHeat() {
-		return heat;
-	}
-
-	public void setHeat(List<String> heat) {
-		this.heat = heat;
-	}
-
-	public List<String> getHumidity() {
-		return humidity;
-	}
-
-	public void setHumidity(List<String> humidity) {
-		this.humidity = humidity;
-	}
-	
-	
 }
