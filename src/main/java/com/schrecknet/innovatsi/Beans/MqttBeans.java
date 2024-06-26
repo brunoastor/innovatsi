@@ -1,10 +1,6 @@
-package com.schrecknet.innovatsi.config.mqtt;
+package com.schrecknet.innovatsi.Beans;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.TimeZone;
 
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +31,7 @@ public class MqttBeans {
 
 	@Bean
 	public MqttPahoClientFactory mqttClientFactory() {
+
 		DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
 		MqttConnectOptions options = new MqttConnectOptions();
 
