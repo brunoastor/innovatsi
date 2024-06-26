@@ -72,18 +72,23 @@ public class MqttBeans {
 			public void handleMessage(Message<?> message) throws MessagingException {
 
 				String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
-
-				if (topic.equals("mytopic")) {
-					System.out.println("This is the topic");
-				}
-
-				System.out.println(message.getPayload());
 				String mensagem = message.getPayload().toString();
 
-				Sector setor = new Sector(new Date(), mensagem);
-				sectorRepo.save(setor);
+				switch (topic) {
+					case "topic":
+						try {
+							System.out.println("mensagem: " + mensagem);
+							Sector sector = new Sector(new Date(), mensagem);
+							sectorRepo.save(sector);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						break;
+					default:
+						System.out.println("Topic not Found!");
+						break;
+				}
 			}
-
 		};
 	}
 
